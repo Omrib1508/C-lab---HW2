@@ -8,7 +8,7 @@
 //............................Includes.................................//
 //.....................................................................//
 #include "my_grep.h"
-#include "IO.c"
+#include "IO.h"
 
 //............................Defines..................................//
 //.....................................................................//
@@ -27,8 +27,8 @@
 int main(int argc, char* argv[]) {
 	Flags*		flags		= NULL;
 	Counters*	counters	= NULL;
-	Files*		files		= NULL;
-	char*		arg_line	= NULL;
+	FILE*		file		= NULL;
+	const char	line[LINE_LENGTH];
 
 	if (argc > ARGUMENTS) {
 		printf("Error: invalid number of arguments(%d instead of %d)\n", (argc - 1), ARGUMENTS);
@@ -36,24 +36,24 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		flags = (Flags*)malloc(sizeof(Flags));
-		if (!flags) {
-			printf("Error: memory didn't allocated correctlly\n");
-			return(EXIT_FAILURE);
+		counters = (Counters*)malloc(sizeof(Counters));
+		ASSERT_ERR("malloc", flags);
+		ASSERT_ERR("malloc", counters);
+
+		file = fopen(argv[argc], 'r');
+		ASSERT_ERR("fopen", file);
+		
+		for (int i = 1; i < argc - 1; i++) {
+			init_flag_struct(flags, argv[i]);
+		}
+		init_counters_struct(counters);
+		while (fgets(line, LINE_LENGTH, file) != EOF) {
+			my_grep();
 		}
 
-		counters  = (Counters*) malloc(sizeof(Counters));
-		if (!counters) {
-			printf("Error: memory didn't allocated correctlly\n");
-			return(EXIT_FAILURE);
-		}
-
-		files = (Files*)malloc(sizeof(Files));
-		if (!files) {
-			printf("Error: memory didn't allocated correctlly\n");
-			return(EXIT_FAILURE);
-		}
-
-		init_flag_struct(flags, arg_line);
+		fclose(file);
+		free(flags);
+		free(counters);
+		return EXIT_SUCCESS;
 	}
-	return EXIT_SUCCESS
 }

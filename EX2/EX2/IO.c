@@ -13,18 +13,25 @@
 
 //............................Defines..................................//
 //.....................................................................//
-#define COMMA 39
+#define HYPHEN_A_SPACE 3
 #define ZERO 48
 #define NINE 57
 
 //............................Functions................................//
 //.....................................................................//
-void init_flag_struct(Flags* flags, char* input_line) {
-	char* num;
-	int j = 0;
+void init_flag_struct(Flags* flags, char* argument_line) {
+	char* num = NULL;
+	int j = 0 , len;
 
-	for (int i = 0; input_line[i] != COMMA; i++)
-		switch (input_line[i]) {
+	len = strlen(argument_line) - HYPHEN_A_SPACE;
+	num = (char*)calloc(len, sizeof(char));
+	if (!num) {
+		printf("Error: memory didn't allocated correctlly\n");
+		return(EXIT_FAILURE);
+	}
+
+	for (int i = 0; argument_line[i] != '\0'; i++)
+		switch (argument_line[i]) {
 		case '-':									i++;		break;
 		case ' ':									i++;		break;
 		case 'b':			flags->b_flag = true;	i++;		break;
@@ -35,11 +42,11 @@ void init_flag_struct(Flags* flags, char* input_line) {
 		case 'x':			flags->x_flag = true;	i++;		break;
 		case 'E':			flags->E_flag = true;	i++;		break;
 		case 'A':			flags->A_flag = true;	i++;
-			while ((input_line[i] >= ZERO) && (input_line[i] <= NINE)) {
-				num[j] = input_line[i];
+			while ((argument_line[i] >= ZERO) && (argument_line[i] <= NINE)) {
+				num[j] = argument_line[i];
 				i++;
 				j++;
 			} break;
-
+			flags->A_num = strtol(num, NULL, 10);
 	}
 }

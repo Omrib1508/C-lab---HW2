@@ -6,6 +6,11 @@
 //info: The my_grep.h file is calling all the function in my_grep.c. it
 //      is also carry the structs that we use for the grep search process
 
+#ifndef MY_GREP_H
+#define MY_GREP_H
+
+#define _CRT_SECURE_NO_WARNINGS
+
 //............................Includes.................................//
 //.....................................................................//
 #include <stdio.h>
@@ -31,10 +36,26 @@ typedef struct flags {
 typedef struct counters {
 	int line_counter;
 	int A_counter;
-	int byte_couner;
+	int byte_counter;
+	int matches_counter;
 }Counters;
 
-typedef struct files {
-	FILE* input;
-	FILE output;
-}Files;
+//.............................Defines.................................//
+//.....................................................................//
+#define ASSERT_ERR(func, ok) do{										\
+	if(!(ok)) {															\
+		if (errno)														\
+			printf("%s failed: %s\n", func, strerror(errno));			\
+		else if (GetLastError())										\
+			printf("%s failed: WinError 0x%X\n", func, GetLastError());	\
+		else															\
+			printf("%s failed: unknown error\n", func);					\
+		exit(EXIT_FAILURE);												\
+	}																	\
+} while (0)
+
+//...........................Functions.................................//
+//.....................................................................//
+void my_grep();
+
+#endif // !MY_GREP_H
